@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Web Pilot",
+  "version": "1.0",
+  "description": "Chat with any website.",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "host_permissions": [
+    "http://127.0.0.1/*"
+  ],
+  "icons": {
+    "16": "icons/webpilot-16.png",
+    "48": "icons/webpilot-16.png",
+    "128": "icons/webpilot-16.png"
+  }
+}

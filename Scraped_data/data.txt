@@ -1,0 +1,177 @@
+Skip to Main Content
+[Alt+S]
+Global
+Ubaid ur Rehman
+IAM
+Roles
+IAM
+Roles
+Identity and Access Management (IAM)
+Dashboard
+Access management
+User groups
+Users
+Roles
+Policies
+Identity providers
+Account settings
+Root access managementNew
+Access reports
+Access Analyzer
+External access
+Unused access
+Analyzer settings
+Credential report
+Organization activity
+Service control policies
+Resource control policies
+New
+Related consoles
+IAM Identity Center
+AWS Organizations
+Role YT-AWSCodeDeployRole created.
+View role
+Roles (12)
+ 
+Info
+Delete
+Create role
+
+An IAM role is an identity you can create that has specific permissions with credentials that are valid for short durations. Roles can be assumed by entities that you trust.
+
+1
+	
+Role name
+	
+Trusted entities
+	
+Last activity
+	
+Role name
+	
+Trusted entities
+	
+Last activity
+
+
+	
+AWSCodeDeployRole
+	
+AWS Service: ec2
+	
+56 days ago
+
+
+	
+AWSServiceRoleForAmazonSSM
+	
+AWS Service: ssm(Service-Linked Role)
+	
+8 days ago
+
+
+	
+AWSServiceRoleForAutoScaling
+	
+AWS Service: autoscaling(Service-Linked Role)
+	
+16 minutes ago
+
+
+	
+AWSServiceRoleForElasticLoadBalancing
+	
+AWS Service: elasticloadbalancing(Service-Linked Role)
+	
+2 hours ago
+
+
+	
+AWSServiceRoleForOrganizations
+	
+AWS Service: organizations(Service-Linked Role)
+	
+-
+
+
+	
+AWSServiceRoleForSupport
+	
+AWS Service: support(Service-Linked Role)
+	
+236 days ago
+
+
+	
+AWSServiceRoleForTrustedAdvisor
+	
+AWS Service: trustedadvisor(Service-Linked Role)
+	
+-
+
+
+	
+loadbalancer
+	
+AWS Service: ec2
+	
+57 days ago
+
+
+	
+mlflow-yt-comment-analyzer-roll
+	
+AWS Service: ec2
+	
+35 days ago
+
+
+	
+Role-for-yt-comments-sentiment-analysis
+	
+AWS Service: ec2
+	
+16 minutes ago
+
+
+	
+service-role-for-CodeDeploy
+	
+AWS Service: codedeploy
+	
+56 days ago
+
+
+	
+YT-AWSCodeDeployRole
+	
+AWS Service: codedeploy
+	
+1 hour ago
+Roles Anywhere
+ 
+Info
+Manage
+
+Authenticate your non AWS workloads and securely provide access to AWS services.
+
+Access AWS from your non AWS workloads
+
+Operate your non AWS workloads using the same authentication and authorization strategy that you use within AWS.
+
+X.509 Standard
+
+Use your own existing PKI infrastructure or use AWS Certificate Manager Private Certificate Authority 
+ to authenticate identities.
+
+Temporary credentials
+
+Use temporary credentials with ease and benefit from the enhanced security they provide.
+
+CloudShell
+Feedback
+© 2024, Amazon Web Services, Inc. or its affiliates.
+Privacy
+Terms
+Cookie preferences
+Table is displaying results from item number 1 to item number 12, and there are 12 items to view
