@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main  
-
 jobs:
   project-testing: 
     runs-on: ubuntu-latest
@@ -28,7 +27,7 @@ jobs:
       - name: Build Docker image
         if: success()
         run: |
-          docker build-t webpilot .
+          docker build -t webpilot .
 
       - name: Tag Docker image
         if: success()
@@ -39,6 +38,7 @@ jobs:
         if: success()
         run: |
           docker push 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+
 
       - name: Pull image to ECR & Deploy image to EC2
         if: success()
@@ -55,10 +55,7 @@ jobs:
             docker pull 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d -p 8000:8000 --name my-app \
-              -e HUGGINGFACE_API_KEY=${{ secrets.HUGGINGFACE_API_KEY }} \
-              -e GPT_API_KEY=${{ secrets.GPT_API_KEY }} \
-              730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+            docker run -d -p 8000:8000 --name my-app 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
     
       # - name: Zip files for deployment
       #   if: success()

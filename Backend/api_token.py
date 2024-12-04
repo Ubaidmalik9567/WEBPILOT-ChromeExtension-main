@@ -1,15 +1,11 @@
-import os
-
-class LargeLanguageModel:
+class LargeLanguageModel():
     def __init__(self):
         pass
-
-    def get_key(self):
-        """Retrieve Hugging Face API key from environment variables."""
-        __api_key = os.getenv("HUGGINGFACE_API_KEY", "default_huggingface_key")
+    
+    def get_Key(self):
+        __api_key = "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"
         return __api_key
-
+    
     def get_gpt_key(self):
-        """Retrieve GPT API key from environment variables."""
-        __api_key = os.getenv("GPT_API_KEY", "default_gpt_key")
+        __api_key = "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"
         return __api_key
