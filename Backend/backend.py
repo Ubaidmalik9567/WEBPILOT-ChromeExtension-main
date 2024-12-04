@@ -64,9 +64,9 @@ def is_youtube_url(url):
 scrp = Scraper()
 rag = RAG_Model()
 
-@app.route('/')
-def home():
-    return jsonify({"message": "Welcome"})
+# @app.route('/')
+# def home():
+#     return jsonify({"message": "Welcome"})
 
 @app.route('/process_page', methods=['POST'])
 def process_page():

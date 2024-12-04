@@ -1,14 +1,5 @@
 FROM python:3.10-alpine
-
-# Copy the backend files into the container
-COPY ./ WEBPILOT-ChromeExtension/backendfile 
-
-# Set the working directory
+COPY ./ WEBPILOT-ChromeExtension/backendfile
 WORKDIR /WEBPILOT-ChromeExtension/backendfile 
-
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Run the backend script
+RUN pip install -r requirements.txt
 CMD ["python", "backend.py"]
-
