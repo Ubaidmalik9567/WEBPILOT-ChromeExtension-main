@@ -13,18 +13,3 @@ pypdf==4.2.0
 pytube
 sentence-transformers==2.6.0
 torch==1.12.1
-
-
-# beautifulsoup4
-# langchain
-# langchain-community
-# langchain-huggingface
-# langchain-openai
-# langchain-core
-# openai
-# Pillow
-# requests
-# faiss-cpu
-# pytube
-# Flask
-# pypdf
