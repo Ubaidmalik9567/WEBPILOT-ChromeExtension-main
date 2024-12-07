@@ -13,5 +13,9 @@ pypdf==4.2.0
 pytube
 sentence-transformers==2.6.0
 torch==1.12.1
-gunicorn
 flask_cors
+python-dotenv 
+boto3
+# uvicorn
+# fastapi
+# gunicorn
