@@ -55,7 +55,8 @@ jobs:
             docker pull 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d -p 8000:8000 --name my-app 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+            docker run -d -p 5000:5000 --env-file .env --name my-app 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+
     
       # - name: Zip files for deployment
       #   if: success()
