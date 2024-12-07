@@ -3,6 +3,7 @@ import warnings as wn
 wn.filterwarnings('ignore')
 import os
 import shutil
+import tempfile
 
 from langchain.prompts import PromptTemplate
 from langchain.callbacks.manager import CallbackManager
@@ -11,37 +12,61 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
 from langchain.document_loaders import PyPDFLoader, TextLoader,YoutubeLoader
-
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
+
+import boto3
+from dotenv import load_dotenv
+
+
+# Load AWS credentials from .env file
+load_dotenv()
 
 # Define the Retrieval_Augmented_Generation class
 class Retrieval_Augmented_Generation:
     
     # Define the path for the database
     __DB_path = "/Docs/Chroma"
-    __store_text_file ="/media/ubaid-ur-rehman/CodeData/vsCode/WEBPILOT-ChromeExtension-main/Scraped_data/data.txt"
+    # __store_text_file ="/media/ubaid-ur-rehman/CodeData/vsCode/WEBPILOT-ChromeExtension-main/Scraped_data/data.txt"
     
     def __init__(self):
         # Initialize the embedding model
         self.embedding_model = self.__embed()
-    
-    def __load_docs(self):
-        try:
-            # Load documents from file path
-            loader = TextLoader(
-                file_path=self.__store_text_file
-            )
-            
-            # Load documents using the loader
-            docs = loader.load()
-            print("Docs load from file...")
-            return docs
         
+        # Initialize S3 client
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+            region_name=os.getenv('AWS_REGION')
+        )
+        self.bucket_name = os.getenv('AWS_S3_BUCKET_NAME')
+
+
+    def __load_docs(self, file_name):
+        try:
+            # Fetch the file from S3
+            response = self.s3_client.get_object(Bucket=self.bucket_name, Key=file_name)
+            file_content = response['Body'].read().decode('utf-8')
+            print("File content successfully retrieved:")
+            
+            # Save the file content to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode='w') as temp_file:
+                temp_file.write(file_content)
+                temp_file_path = temp_file.name
+
+            # Load documents using the TextLoader with the temporary file path
+            loader = TextLoader(file_path=temp_file_path)
+            docs = loader.load()
+
+            # Optionally delete the temporary file after loading
+            os.remove(temp_file_path)
+
+            return docs
         except Exception as e:
-            print(f"Error loading documents: {e}")
+            print(f"Error retrieving file: {e}")
             return None
-    
+
     def __load_pdf(self,file_path):
         # error message
         error_text = """
@@ -181,7 +206,7 @@ class Retrieval_Augmented_Generation:
         
         # Split the loaded documents into chunks
         split = rec_splitter.split_documents(
-            self.__load_docs()
+            self.__load_docs("scraped_data.txt")
         )
         
         return split
