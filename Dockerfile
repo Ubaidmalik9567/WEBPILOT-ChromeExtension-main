@@ -2,29 +2,27 @@ FROM python:3.10-slim
 
 # Install system dependencies for Python packages
 RUN apt-get update && apt-get install -y \
-    build-essential \
     libffi-dev \
     libjpeg-dev \
     zlib1g-dev \
-    && apt-get clean
-
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory to /app/
 WORKDIR /app/
 
-# Copy the Backend folder to /app/
+# Copy the Backend folder and requirements.txt to /app/
 COPY Backend/ /app/
 COPY requirements.txt /app/
+COPY .env /app/.env
 
 
 # Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
+# Expose the application port
 EXPOSE 5000
 
-# Command to run your application
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "backend:app"]
-
-
+# Command to run your FastAPI app with Uvicorn
+CMD ["uvicorn", "backend:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
 
