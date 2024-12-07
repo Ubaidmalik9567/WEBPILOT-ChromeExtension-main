@@ -27,8 +27,7 @@ class Retrieval_Augmented_Generation:
     
     # Define the path for the database
     __DB_path = "/Docs/Chroma"
-    # __store_text_file ="/media/ubaid-ur-rehman/CodeData/vsCode/WEBPILOT-ChromeExtension-main/Scraped_data/data.txt"
-    
+        
     def __init__(self):
         # Initialize the embedding model
         self.embedding_model = self.__embed()
@@ -43,29 +42,21 @@ class Retrieval_Augmented_Generation:
         self.bucket_name = os.getenv('AWS_S3_BUCKET_NAME')
 
 
+
     def __load_docs(self, file_name):
         try:
             # Fetch the file from S3
             response = self.s3_client.get_object(Bucket=self.bucket_name, Key=file_name)
             file_content = response['Body'].read().decode('utf-8')
-            print("File content successfully retrieved:")
-            
-            # Save the file content to a temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode='w') as temp_file:
-                temp_file.write(file_content)
-                temp_file_path = temp_file.name
+            print("File content successfully retrieved")
 
-            # Load documents using the TextLoader with the temporary file path
-            loader = TextLoader(file_path=temp_file_path)
-            docs = loader.load()
-
-            # Optionally delete the temporary file after loading
-            os.remove(temp_file_path)
-
+            # Create a Document object directly
+            docs = [Document(page_content=file_content)]
             return docs
         except Exception as e:
             print(f"Error retrieving file: {e}")
             return None
+
 
     def __load_pdf(self,file_path):
         # error message
