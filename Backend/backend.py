@@ -1,14 +1,23 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS  # Import CORS
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from RAG_QnA import RAG_Model
 from scrap import Scraper
 import requests
 import re
 from urllib.parse import urlparse, unquote
-import json
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+app = FastAPI()
+
+# Enable CORS for all routes
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Utility functions to validate URLs
 def is_valid_url(url):
@@ -60,22 +69,29 @@ def is_youtube_url(url):
 scrp = Scraper()
 rag = RAG_Model()
 
-@app.route('/')
-def home():
-    return jsonify({"message": "Welcome"})
+# Request models
+class ProcessPageRequest(BaseModel):
+    url: str
+    text: str
 
-@app.route('/process_page', methods=['POST'])
-def process_page():
+class GenerateResponseRequest(BaseModel):
+    message: str
+
+@app.get("/")
+def home():
+    return {"message": "Welcome"}
+
+@app.post("/process_page")
+async def process_page(request: ProcessPageRequest):
     try:
-        data = request.json
-        url = data.get('url')
-        text = data.get('text')
+        url = request.url
+        text = request.text
         
         if not url:
-            return jsonify({'error': 'Missing URL'}), 400
+            raise HTTPException(status_code=400, detail="Missing URL")
         
         if not text:
-            return jsonify({'error': 'Missing text'}), 400
+            raise HTTPException(status_code=400, detail="Missing text")
         
         print(f"URL: {url}")
 
@@ -91,27 +107,23 @@ def process_page():
             scrp.Tab_data(text=text)
             rag.load_Database()
 
-        return jsonify({'message': 'Page processed successfully'}), 200
+        return JSONResponse(content={"message": "Page processed successfully"}, status_code=200)
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/generate_response', methods=['POST'])
-def generate_response():
+@app.post("/generate_response")
+async def generate_response(request: GenerateResponseRequest):
     try:
-        data = request.json
-        user_input = data.get('message')
+        user_input = request.message
 
         if not user_input:
-            return jsonify({'error': 'Missing message'}), 400
+            raise HTTPException(status_code=400, detail="Missing message")
 
         response = rag.generateResponse(user_input)
         print(response)
         
-        return jsonify({'response': response}), 200
+        return {"response": response}
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False)
+        raise HTTPException(status_code=500, detail=str(e))
