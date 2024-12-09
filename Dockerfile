@@ -24,7 +24,7 @@ ENV FLASK_APP=backend.py
 ENV FLASK_ENV=development
 
 # Expose the application port
-EXPOSE 8000
+EXPOSE 5000
 
 # Command to run your Flask app
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
