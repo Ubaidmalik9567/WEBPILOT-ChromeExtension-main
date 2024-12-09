@@ -66,7 +66,7 @@ rag = RAG_Model()
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Welcome"})
+    return jsonify({"message": "Welcome here"})
 
 @app.route('/process_page', methods=['POST'])
 def process_page():

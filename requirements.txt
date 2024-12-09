@@ -11,12 +11,12 @@ Requests==2.32.3
 faiss-cpu==1.9.0
 pypdf
 pytube
+youtube-transcript-api
 sentence-transformers==2.6.0
 torch==1.12.1
 flask_cors
 python-dotenv 
 boto3
-youtube-transcript-api
 # uvicorn
 # fastapi
 # gunicorn
