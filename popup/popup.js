@@ -131,7 +131,7 @@ async function processPage() {
             text: "PDF file"
         };
 
-        await fetch('http://127.0.0.1:5000/process_page', {
+        await fetch('http://127.0.0.1:8000/process_page', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -158,7 +158,7 @@ async function processPage() {
     };
 
     // Send the data (URL + page text) to the Flask server
-    await fetch('http://127.0.0.1:5000/process_page', {
+    await fetch('http://127.0.0.1:8000/process_page', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -341,7 +341,7 @@ async function sendMessage() {
 
     try {
         // Send the user's message to the Flask server for a response
-        const response = await fetch('http://127.0.0.1:5000/generate_response', {
+        const response = await fetch('http://127.0.0.1:8000/generate_response', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: userInput })

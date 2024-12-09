@@ -62,7 +62,7 @@ rag = RAG_Model()
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Welcome"})
+    return jsonify({"message": "Welcome here"})
 
 @app.route('/process_page', methods=['POST'])
 def process_page():
@@ -112,6 +112,5 @@ def generate_response():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0', port=8000)
