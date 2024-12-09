@@ -93,7 +93,7 @@ class RAG_Model:
         self.gpt_llm = ChatOpenAI(
             model='gpt-4o-mini',
             temperature=0.1,
-            max_tokens=400,
+            max_tokens=600,
             stop_sequences=self.filter,
         )
     
@@ -115,8 +115,7 @@ class RAG_Model:
         # Define the prompt template
         template = """
         Your name is **WEB-PILOT**, a chatbot developed by WEBPILOT TEAM that answers user questions.
-        Keep your answer short, concise and informative. 
-        Keep answers under 60 words, in simple and clear English.
+        Keep your answer short, concise and informative in simple english.
         
         **Chat History**
         

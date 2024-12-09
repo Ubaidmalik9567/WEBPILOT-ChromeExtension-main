@@ -89,6 +89,7 @@ class Retrieval_Augmented_Generation:
             print("PDF loaded successfully!")
         except Exception as e:
             print(f"Error loading PDF file")
+            print(e)
             # Return error_text in a Document object
             docs = [Document(page_content=error_text)]
             return docs
@@ -162,6 +163,7 @@ class Retrieval_Augmented_Generation:
             # if error occure then this code with run
             print("Video Transcript Error Occure....")
             docs = [Document(page_content=x) for x in splitter.split_text(error_text)]
+            print(e)
             split = splitter.split_documents(
                 documents=docs
             )
