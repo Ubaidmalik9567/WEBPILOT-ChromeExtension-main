@@ -17,6 +17,12 @@ from langchain.schema import Document
 
 import boto3
 from dotenv import load_dotenv
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
 
 
 # Load AWS credentials from .env file
@@ -58,54 +64,51 @@ class Retrieval_Augmented_Generation:
             return None
 
 
-    def __load_pdf(self,file_path):
-        # error message
+    def __load_pdf(self, file_path):
+        # Error messages
         error_text = """
-            Please Show this Error message in easy way to user if user Ask any question about context.
-            Sorry cannot Load PDF File because of Invalid PDF file Location format or non-pdf file. 
-            Please Try again with different pdf file.
+            Please Show this Error message in an easy way to the user if the user asks any question about context.
+            Sorry, cannot Load PDF File because of Invalid PDF file Location format or non-pdf file. 
+            Please try again with a different PDF file.
         """
         error_text_2 = """
-            Please Show this Error message in easy way to user if user Ask any question about context.
+            Please Show this Error message in an easy way to the user if the user asks any question about context.
             This file may be a scanned PDF or it could be empty, meaning there is no data available. 
             Please try again with a PDF that contains text data and is not just a scanned image.
         """
-        
-        # define the spilter docs properties
+
+        # Define the splitter properties
         chunks_size = 1000
         chunks_overlap = 40
-        
         splitter = RecursiveCharacterTextSplitter(
-            # Set a really small chunk size, just to show.
             chunk_size=chunks_size,
             chunk_overlap=chunks_overlap,
             length_function=len,
             is_separator_regex=False
         )
+
         try:
-            # Attempt to load the PDF
+            logging.info("Attempting to load PDF from path: %s", file_path)
             loader = PyPDFLoader(file_path=file_path)
             docs = loader.load()
-            print("PDF loaded successfully!")
+            logging.info("PDF loaded successfully with %d documents.", len(docs))
         except Exception as e:
-            print(f"Error loading PDF file")
-            print(e)
-            # Return error_text in a Document object
+            logging.error("Error loading PDF file: %s", str(e))
             docs = [Document(page_content=error_text)]
+            logging.info("Returning error message document.")
             return docs
 
         # Check if the document contains data
         if len(docs) == 0 or not all(doc.page_content.strip() for doc in docs):
-            print("PDF file has no readable text or data...")
+            logging.warning("PDF file has no readable text or data.")
             docs = [Document(page_content=error_text_2)]
-    
+
         # Split documents into chunks
         split_docs = splitter.split_documents(docs)
-    
+        logging.info("PDF successfully split into %d chunks.", len(split_docs))
         return split_docs
-
     
-    
+        
     def __load_text(self,text):
         # define the spilter docs properties
         chunks_size = 1000
@@ -129,60 +132,53 @@ class Retrieval_Augmented_Generation:
             
         return split
 
-    def __load_youtube_transcript(self,youtube_url):
-        
+
+    def __load_youtube_transcript(self, youtube_url):
         error_text = """
-            Please Show this Error message in easy way to user if user Ask about context or video context.
+            Please Show this Error message in an easy way to the user if the user asks about context or video context.
             We could not retrieve a transcript for the requested video URL. This is likely due to the following reasons:
             No transcripts were found for any of the requested language codes: ['english'].
             As a result, this video does not have an English transcript. To chat about the video, you must have a transcript available in English.
         """
-        
-        error_text_2 ="""
-            Please Show this Error message in easy way to user if user Ask about context or video context.
-            Sorry I can't describe this video because We couldn't retrieve the transcript for this video.This might be because the video doesn't have subtitles or transcripts in English. 
+        error_text_2 = """
+            Please Show this Error message in an easy way to the user if the user asks about context or video context.
+            Sorry, I can't describe this video because we couldn't retrieve the transcript for this video. This might be because the video doesn't have subtitles or transcripts in English. 
             Please check if the video includes an English transcript and try again.
         """
-        
-        # define the spilter docs properties
+
+        # Define the splitter properties
         chunks_size = 1000
         chunks_overlap = 40
         splitter = RecursiveCharacterTextSplitter(
-            # Set a really small chunk size, just to show.
             chunk_size=chunks_size,
             chunk_overlap=chunks_overlap,
             length_function=len,
             is_separator_regex=False
         )
+
         try:
-            loader = YoutubeLoader.from_youtube_url(
-                youtube_url=youtube_url
-            )
+            logging.info("Attempting to load YouTube transcript from URL: %s", youtube_url)
+            loader = YoutubeLoader.from_youtube_url(youtube_url=youtube_url)
             docs = loader.load()
+            logging.info("Successfully loaded YouTube transcript. Retrieved %d documents.", len(docs))
         except Exception as e:
-            # if error occure then this code with run
-            print("Video Transcript Error Occure....")
+            logging.error("Error retrieving YouTube transcript: %s", str(e))
             docs = [Document(page_content=x) for x in splitter.split_text(error_text)]
-            print(e)
-            split = splitter.split_documents(
-                documents=docs
-            )
-        
+            split = splitter.split_documents(documents=docs)
+            logging.info("Returning error message split into chunks.")
+            return split
+
         if len(docs) == 0:
-            # if no transcript found then this code will run
-            print("Video Don't have Transcript")
+            logging.warning("No transcript found for the provided YouTube URL.")
             docs = [Document(page_content=x) for x in splitter.split_text(error_text_2)]
-            split = splitter.split_documents(
-                documents=docs
-            )
         else:
-            # if transcript found then this code will run
-            split = splitter.split_documents(
-                documents=docs
-            )
-            
+            logging.info("Splitting YouTube transcript into chunks.")
+            split = splitter.split_documents(documents=docs)
+
+        logging.info("YouTube transcript successfully split into %d chunks.", len(split))
         return split
-    
+
+        
     def __text_spliter(self, chunks_size=500, chunks_overlap=50):
         # Define the chunks and overlap
         chunks_size = 1000

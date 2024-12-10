@@ -15,13 +15,16 @@ COPY Backend/ /app/
 COPY requirements.txt /app/
 COPY .env /app/.env
 
-
 # Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Set environment variables for Flask
+ENV FLASK_APP=backend.py
+ENV FLASK_ENV=development
+
 # Expose the application port
 EXPOSE 5000
 
-# Command to run your FastAPI app with Uvicorn
-CMD ["uvicorn", "backend:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+# Command to run your Flask app
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
