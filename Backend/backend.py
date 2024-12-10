@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # Import CORS
 from RAG_QnA import RAG_Model
 from scrap import Scraper
 import requests
@@ -8,7 +7,6 @@ from urllib.parse import urlparse, unquote
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
 
 # Utility functions to validate URLs
 def is_valid_url(url):
@@ -23,13 +21,19 @@ def is_valid_url(url):
     return re.match(regex, url) is not None
 
 
+
 def get_file_url(file_url):
+    # Check if the URL starts with https://
     if file_url.startswith("https://"):
         return file_url
     else:
+        # Parse the URL and convert to a valid file path
         parsed_url = urlparse(file_url)
+        # Extract the path and convert it to a valid file system path
         file_path = parsed_url.path
+        # Extract the path and decode it to remove '%20'
         file_path = unquote(file_path)
+        # Return the parsed file path
         return file_path
 
 def is_pdf_url(url):
@@ -67,6 +71,7 @@ def home():
 @app.route('/process_page', methods=['POST'])
 def process_page():
     try:
+        # Fetch URL and text from the request
         data = request.json
         url = data.get('url')
         text = data.get('text')
@@ -79,15 +84,31 @@ def process_page():
         
         print(f"URL: {url}")
 
+        # Check if the URL is a PDF or a YouTube link
         if is_pdf_url(url):
-            parse_url = get_file_url(file_url=url)
-            print("Parse URL: ", parse_url)
-            rag.load_Database(is_pdf=True, pdf_url=parse_url)
+            # Process PDF
+            parse_url = get_file_url(
+                file_url=url
+            )
+            
+            print("Parse URL: ",parse_url)
+            
+            rag.load_Database(
+                is_pdf=True, 
+                pdf_url=parse_url
+            )
+            
         elif is_youtube_url(url):
+            # Process YouTube video
             print("URL Type: Youtube Video")
-            rag.load_Database(is_youtube_url=True, youtube_url=url)
+            rag.load_Database(
+                is_youtube_url=True, 
+                youtube_url=url
+            )
+            
         else:
             print("This is Website URL")
+            # Process standard web page text
             scrp.Tab_data(text=text)
             rag.load_Database()
 
@@ -105,6 +126,7 @@ def generate_response():
         if not user_input:
             return jsonify({'error': 'Missing message'}), 400
 
+        # Generate response based on user input
         response = rag.generateResponse(user_input)
         print(response)
         
