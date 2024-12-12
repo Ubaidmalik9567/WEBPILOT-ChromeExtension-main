@@ -40,47 +40,47 @@ jobs:
           docker push 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
 
 
-      # - name: Pull image to ECR & Deploy image to EC2
-      #   if: success()
-      #   uses: appleboy/ssh-action@v0.1.5
-      #   with:
-      #     host: ${{ secrets.EC2_HOST }}
-      #     username: ${{ secrets.EC2_USER }}
-      #     key: ${{ secrets.EC2_SSH_KEY }}
-      #     script: |
-      #       aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #       aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #       aws configure set default.region eu-north-1
-      #       aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 730335254649.dkr.ecr.eu-north-1.amazonaws.com
-      #       docker pull 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
-      #       docker stop my-app || true
-      #       docker rm my-app || true
-      #       docker run -p 5000:5000 --name my-app 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+      - name: Pull image to ECR & Deploy image to EC2
+        if: success()
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws configure set default.region eu-north-1
+            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 730335254649.dkr.ecr.eu-north-1.amazonaws.com
+            docker pull 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
+            docker stop my-app || true
+            docker rm my-app || true
+            docker run -p 5000:5000 --name my-app 730335254649.dkr.ecr.eu-north-1.amazonaws.com/webpilot:latest
 
     
-      # - name: Zip files for deployment
-      #   if: success()
-      #   run: |
-      #     zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
+      - name: Zip files for deployment
+        if: success()
+        run: |
+          zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
 
-      # - name: Upload ZIP to S3
-      #   if: success()
-      #   run: |
-      #     aws s3 cp deployment.zip s3://yt-chrome-plugin/deployment.zip
+      - name: Upload ZIP to S3
+        if: success()
+        run: |
+          aws s3 cp deployment.zip s3://yt-chrome-plugin/deployment.zip
 
-      #   # Deploy to AWS CodeDeploy using the uploaded ZIP file
-      # - name: Deploy to AWS CodeDeploy
-      #   if: success()
-      #   run: |
-      #     aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws deploy create-deployment \
-      #       --application-name ChromePlugin \
-      #       --deployment-config-name CodeDeployDefault.OneAtATime \
-      #       --deployment-group-name ChromePluginDeployGroup \
-      #       --s3-location bucket=yt-chrome-plugin,key=deployment.zip,bundleType=zip \
-      #       --file-exists-behavior OVERWRITE \
-      #       --region eu-north-1
+        # Deploy to AWS CodeDeploy using the uploaded ZIP file
+      - name: Deploy to AWS CodeDeploy
+        if: success()
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws deploy create-deployment \
+            --application-name ChromePlugin \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name ChromePluginDeployGroup \
+            --s3-location bucket=yt-chrome-plugin,key=deployment.zip,bundleType=zip \
+            --file-exists-behavior OVERWRITE \
+            --region eu-north-1
 
 # git-token: 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
 
