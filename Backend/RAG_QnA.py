@@ -115,7 +115,7 @@ class RAG_Model:
         # Define the prompt template
         template = """
         Your name is **WEB-PILOT**, a chatbot developed by WEBPILOT TEAM that answers user questions.
-        Keep your answer short, concise and informative in simple english.
+        Keep your answer concise and informative in simple english.
         
         **Chat History**
         
@@ -141,7 +141,7 @@ class RAG_Model:
         # Define the prompt template
         template = """
         Your name is WEB-PILOT(Created by Web-pilot team), a chatbot that answers user questions based on provided scraped context. 
-        Keep answers under 60 words, in simple and clear English.
+        Keep answers simple and in clear English.
         
         ##Chat History
         
